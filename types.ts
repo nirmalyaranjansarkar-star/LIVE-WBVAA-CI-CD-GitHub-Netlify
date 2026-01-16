@@ -35,6 +35,13 @@ export interface ServiceRecord {
   category: 'Promotion' | 'Transfer' | 'Order';
 }
 
+export interface GalleryImage {
+  id: string;
+  driveId: string; // The Google Drive File ID
+  caption: string;
+  date?: string;
+}
+
 export interface TranslationDictionary {
   [key: string]: {
     en: string;

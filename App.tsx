@@ -3,9 +3,9 @@ import {
   Search, Sun, Moon, Globe, Menu, X, 
   ChevronRight, FileText, Users, MapPin, 
   GraduationCap, BookOpen, Briefcase, Home,
-  Download, ArrowRight
+  Download, ArrowRight, Image as ImageIcon
 } from 'lucide-react';
-import { CircularCrossLogo, NAV_ITEMS, DISTRICTS, NOTICES, SERVICE_RECORDS, DICTIONARY } from './constants';
+import { CircularCrossLogo, NAV_ITEMS, DISTRICTS, NOTICES, SERVICE_RECORDS, DICTIONARY, GALLERY_IMAGES, HERO_SLIDER_IMAGES } from './constants';
 import { Language, District } from './types';
 
 // --- UI COMPONENTS ---
@@ -29,6 +29,38 @@ const Badge = ({ children, type }: { children: React.ReactNode, type?: 'new' | '
   );
 };
 
+// --- SAFE IMAGE COMPONENT ---
+// This component handles the specific requirements for Google Drive hosting
+const SafeImage = ({ driveId, alt, className }: { driveId: string, alt: string, className?: string }) => {
+  const [hasError, setHasError] = useState(false);
+  
+  // Construct the Google Drive "Export" URL
+  const src = `https://drive.google.com/uc?export=view&id=${driveId}`;
+
+  // Fallback image in case the Google Drive link fails or is private
+  const fallbackSrc = "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2674&auto=format&fit=crop";
+
+  if (hasError) {
+    return (
+      <div className={`flex items-center justify-center bg-gray-200 dark:bg-slate-800 text-gray-400 ${className}`}>
+        <ImageIcon className="w-8 h-8 opacity-50" />
+      </div>
+    );
+  }
+
+  return (
+    <img 
+      src={src}
+      alt={alt}
+      className={className}
+      // CRITICAL: prevents Google from checking the referrer and blocking the request
+      referrerPolicy="no-referrer"
+      onError={() => setHasError(true)}
+      loading="lazy"
+    />
+  );
+};
+
 // --- MAIN APP ---
 
 const App: React.FC = () => {
@@ -39,6 +71,7 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
+  const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   
   // Simulated Async Loading State
   const [loading, setLoading] = useState(false);
@@ -51,6 +84,14 @@ const App: React.FC = () => {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  // Hero Slider Timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentHeroIndex((prev) => (prev + 1) % HERO_SLIDER_IMAGES.length);
+    }, 5000); // Change slide every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   const toggleLang = () => setLang(l => l === 'en' ? 'bn' : 'en');
   const t = (key: string) => DICTIONARY[key][lang];
@@ -76,26 +117,41 @@ const App: React.FC = () => {
   // --- SUB-VIEWS ---
 
   const renderHome = () => (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand to-brand-light text-white p-8 md:p-12 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-yellow-400 opacity-10 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="relative overflow-hidden rounded-2xl shadow-2xl text-white min-h-[500px] flex items-center">
+        {/* Background Slider */}
+        {HERO_SLIDER_IMAGES.map((img, index) => (
+          <div 
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentHeroIndex ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <img 
+              src={img} 
+              alt={`Hero slide ${index + 1}`} 
+              className="w-full h-full object-cover"
+            />
+            {/* Overlay for each image to ensure text contrast */}
+            <div className="absolute inset-0 bg-gradient-to-r from-brand/95 via-brand/80 to-brand/30"></div>
+          </div>
+        ))}
         
-        <div className="relative z-10 max-w-3xl">
-          <div className="flex items-center space-x-2 mb-4 text-brand-200 uppercase tracking-widest text-xs font-bold">
+        <div className="relative z-10 p-8 md:p-12 max-w-3xl w-full">
+          <div className="flex items-center space-x-2 mb-4 text-brand-200 uppercase tracking-widest text-xs font-bold opacity-0 animate-fade-in-up">
             <span className="w-8 h-0.5 bg-yellow-400"></span>
             <span>Since 1979</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight font-serif">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight font-serif opacity-0 animate-fade-in-up delay-100 drop-shadow-lg">
             {t('heroTitle')}
           </h1>
-          <p className="text-brand-100 text-lg mb-8 max-w-xl">
+          <p className="text-brand-100 text-lg mb-8 max-w-xl opacity-0 animate-fade-in-up delay-200 drop-shadow-md">
             {t('heroSubtitle')}
           </p>
 
           {/* Psychological Search Bar */}
-          <div className="relative max-w-xl group">
+          <div className="relative max-w-xl group opacity-0 animate-fade-in-up delay-300">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-brand-300 group-focus-within:text-brand" />
             </div>
@@ -111,7 +167,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Bento Grid Resources */}
-      <div>
+      <div className="opacity-0 animate-fade-in delay-500">
         <h2 className="text-xl font-bold mb-4 flex items-center">
           <Users className="w-5 h-5 mr-2 text-brand dark:text-brand-light" />
           {t('quickResources')}
@@ -156,8 +212,31 @@ const App: React.FC = () => {
         </div>
       </div>
 
+      {/* NEW: Photo Gallery Section */}
+      <div className="opacity-0 animate-fade-in delay-600">
+        <h2 className="text-xl font-bold mb-4 flex items-center">
+          <ImageIcon className="w-5 h-5 mr-2 text-brand dark:text-brand-light" />
+          {t('galleryTitle')}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {GALLERY_IMAGES.map((image) => (
+            <div key={image.id} className="group relative aspect-video overflow-hidden rounded-xl bg-gray-100 dark:bg-slate-800 shadow-sm border border-gray-100 dark:border-slate-800">
+              <SafeImage 
+                driveId={image.driveId}
+                alt={image.caption}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                <p className="text-white font-medium text-sm translate-y-2 group-hover:translate-y-0 transition-transform duration-300">{image.caption}</p>
+                {image.date && <p className="text-gray-300 text-xs translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75">{image.date}</p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* District Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-0 animate-fade-in delay-700">
         <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-gray-100 dark:border-slate-800 shadow-sm">
           <h3 className="font-bold mb-4 flex items-center">
             <MapPin className="w-4 h-4 mr-2 text-brand" />
@@ -372,12 +451,19 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-brand selection:text-white">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-brand selection:text-white relative">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/95 backdrop-blur-md border-b border-gray-200 dark:border-slate-800 transition-colors duration-300">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('home')}>
             <CircularCrossLogo size={48} />
+            
+             <SafeImage 
+               driveId="1g83itJN6CHETAFeyvgno3hv2OoK1c5qr" 
+               alt="WBVAA Banner" 
+               className="h-8 md:h-12 w-auto object-contain rounded-md shadow-sm border border-gray-100 dark:border-slate-800"
+             />
+
             <div className="hidden md:block">
               <h1 className="font-black text-xl leading-none tracking-tight text-brand dark:text-white">WBVAA</h1>
               <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Alumni Association</p>

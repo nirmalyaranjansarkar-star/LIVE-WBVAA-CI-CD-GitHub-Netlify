@@ -1,5 +1,5 @@
 import React from 'react';
-import { District, NavItem, Notice, ServiceRecord, TranslationDictionary } from './types';
+import { District, NavItem, Notice, ServiceRecord, TranslationDictionary, GalleryImage } from './types';
 
 // --- BRANDING COMPONENT ---
 export const CircularCrossLogo = ({ size = 40, color = '#1e1b5e', thickness = 4 }: { size?: number, color?: string, thickness?: number }) => {
@@ -115,6 +115,40 @@ export const SERVICE_RECORDS: ServiceRecord[] = [
   { id: 'SR004', title: 'WBHS Enrolment Guideline Revised', date: '2023-07-10', category: 'Order' },
 ];
 
+export const HERO_SLIDER_IMAGES = [
+  "https://ik.imagekit.io/1dyprphd4/457059603_908765151286180_2675290478514999866_n.webp?updatedAt=1768548584210",
+  "https://ik.imagekit.io/1dyprphd4/430023042_798912592271437_6276045469615509955_n.webp?updatedAt=1768548584454",
+  "https://ik.imagekit.io/1dyprphd4/431644675_798912128938150_7084093102099202623_n.webp?updatedAt=1768548584386",
+  "https://ik.imagekit.io/1dyprphd4/WhatsApp%20Image%202025-12-31%20at%2015.24.00.webp?updatedAt=1768548585078",
+  "https://ik.imagekit.io/1dyprphd4/430074344_798912202271476_4613084758873387876_n.webp?updatedAt=1768548584191"
+];
+
+// --- GALLERY IMAGES ---
+// INSTRUCTIONS FOR USER:
+// 1. Get the Share Link from Google Drive.
+// 2. Extract the ID part (between /d/ and /view).
+// 3. Paste it as the 'driveId' below.
+export const GALLERY_IMAGES: GalleryImage[] = [
+  {
+    id: '1',
+    driveId: '15Kgs8EWl0L9lsA9tSF4ren1O2C8Om-2N',
+    caption: 'Annual General Meeting 2023',
+    date: 'Oct 2023'
+  },
+  {
+    id: '2',
+    driveId: '1g83itJN6CHETAFeyvgno3hv2OoK1c5qr', // REPLACE THIS with your second photo ID
+    caption: 'District Tour: Bankura',
+    date: 'Sept 2023'
+  },
+  {
+    id: '3',
+    driveId: '1g83itJN6CHETAFeyvgno3hv2OoK1c5qr', // REPLACE THIS with your third photo ID
+    caption: 'Veterinary Day Celebration',
+    date: 'Apr 2023'
+  }
+];
+
 export const DICTIONARY: TranslationDictionary = {
   heroTitle: {
     en: 'Advancing the Veterinary Profession',
@@ -139,6 +173,10 @@ export const DICTIONARY: TranslationDictionary = {
   districtExplorer: {
     en: 'District Explorer',
     bn: 'জেলা অনুসন্ধান'
+  },
+  galleryTitle: {
+    en: 'Activity Gallery',
+    bn: 'কার্যকলাপ গ্যালারি'
   },
   login: {
     en: 'Member Login',
