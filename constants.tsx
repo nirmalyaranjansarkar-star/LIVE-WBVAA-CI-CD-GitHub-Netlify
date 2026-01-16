@@ -131,7 +131,7 @@ export const HERO_SLIDER_IMAGES = [
 export const GALLERY_IMAGES: GalleryImage[] = [
   {
     id: '1',
-    driveId: '15Kgs8EWl0L9lsA9tSF4ren1O2C8Om-2N',
+    driveId: '1g83itJN6CHETAFeyvgno3hv2OoK1c5qr', // REPLACE THIS with your second photo ID
     caption: 'Annual General Meeting 2023',
     date: 'Oct 2023'
   },
