@@ -458,12 +458,6 @@ const App: React.FC = () => {
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('home')}>
             <CircularCrossLogo size={48} />
             
-             <SafeImage 
-               driveId="1g83itJN6CHETAFeyvgno3hv2OoK1c5qr" 
-               alt="WBVAA Banner" 
-               className="h-8 md:h-12 w-auto object-contain rounded-md shadow-sm border border-gray-100 dark:border-slate-800"
-             />
-
             <div className="hidden md:block">
               <h1 className="font-black text-xl leading-none tracking-tight text-brand dark:text-white">WBVAA</h1>
               <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Alumni Association</p>
